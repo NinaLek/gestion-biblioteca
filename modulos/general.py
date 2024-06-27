@@ -33,7 +33,8 @@ def verificar_fechas():
                     f = d.datetime.strptime(f,'%d/%m/%Y')
                     return f
         print('Fecha incorrecta.Inténtelo nuevamente')
-                
+
+
 def validar_entero(rango,dato ='opción: '):
     while True:
         n = input(dato)
@@ -46,3 +47,8 @@ def validar_entero(rango,dato ='opción: '):
         else:
             print('Incorrecto. no fue correcto')
             
+def jsonVacio(archivo):
+    if os.path.getsize(archivo) == 0:
+        return True
+    else:
+        return False
