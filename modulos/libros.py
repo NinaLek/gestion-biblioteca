@@ -36,8 +36,13 @@ def registrar_libro():
                 "genero":genero,
                 "cantidad_disponible": cantidad_disponible
             }
+            libros.append(l)
+            editar_libro_json(libros)#escribo la lista actualizada en el json también
 
 
+def modificar_cantidad(id):
+    libros[id-1]['cantidad_disponible'] +=1
+    editar_libro_json(libros)
 
 
 def busqueda_libro():
