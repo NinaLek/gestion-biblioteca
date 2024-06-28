@@ -15,6 +15,7 @@ while True:
           #00  menu_prestamos_devoluciones()
         case 4:
             if not g.jsonVacio('libros.json'):
-                l.busqueda_libro() 
+                print('BUSQUEDA DE LIBRO POR:')
+                l.menu_buscar_libro() 
             else:
                 print('No hay libros registrados aún')  
