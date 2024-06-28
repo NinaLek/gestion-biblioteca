@@ -1,4 +1,4 @@
-from .general import validar_entero, jsonVacio
+from .general import validar_entero, jsonVacio, clear
 from .prestamos import realizar_prestamo
 import json, os, datetime
 libros = []
@@ -14,31 +14,76 @@ Sección LIBROS:
 Opción: """)
     
 def registrar_libro():
+    nuevo = True
     titulo = input('Título: ').capitalize()
     autor = input('Autor: ').capitalize()
     editorial = input('editorial: ').capitalize()
     for libro in libros:
         if libro['titulo'] == titulo and libro['autor'] == autor and libro['editorial']== editorial:
+            nuevo=False
             op= input('Libro registrado. ¿Le gustaría agregar un ejemplar? (S/N)').capitalize()
             if op == 'S':
                 modificar_cantidad(libro['id_libro'])
-        else:
-            idAuto()
-            genero = input('Genero: ').capitalize()
-            anio_publicacion = validar_entero(datetime.datetime.now().year,'Año de publicación: ')
-            cantidad_disponible = validar_entero(1000,'Cantidad de ejemplares disponibles: ')
-            l = {
-                "id_libro":id_libro,
-                "titulo":titulo,
-                "autor":autor,
-                "editorial":editorial,
-                "anio_publicacion":anio_publicacion,
-                "genero":genero,
-                "cantidad_disponible": cantidad_disponible
-            }
-            libros.append(l)
-            editar_libro_json(libros)#escribo la lista actualizada en el json también
+                break
+    if nuevo == True:
+        idAuto()
+        genero = input('Genero: ').capitalize()
+        anio_publicacion = validar_entero(datetime.datetime.now().year,'Año de publicación: ')
+        cantidad_disponible = validar_entero(1000,'Cantidad de ejemplares disponibles: ')
+        l = {
+            "id_libro":id_libro,
+            "titulo":titulo,
+            "autor":autor,
+            "editorial":editorial,
+            "anio_publicacion":anio_publicacion,
+            "genero":genero,
+            "cantidad_disponible": cantidad_disponible,
+            "estado":'Activo'
+        }
+        libros.append(l)
+        editar_libro_json(libros)#escribo la lista actualizada en el json también
 
+
+def editar_libro(id):
+    op = validar_entero(6,"""
+Qué dato desea editar:
+                        1- Título
+                        2- Autor
+                        3- Editorial
+                        4- Género
+                        5- Año de publicación
+                        6- Cantidad disponible
+                        0- Volver
+                        Opción: """)
+    if op != 0:
+        match op:
+            case 1: 
+                categoria = 'titulo'
+                dato = input('Nuevo título: ')
+            case 2:
+                categoria = 'autor'
+                dato = input('Nuevo autor: ')
+            case 3:
+                categoria = 'editorial'
+                dato = input('Nueva editorial: ')
+            case 4: 
+                categoria = 'genero'
+                dato = input('Nuevo género: ')
+            case 5:
+                categoria = 'anio_publicacion'
+                dato = validar_entero(datetime.datetime.now().year, 'Nuevo año de publicación')
+            case 6:
+                categoria = 'cantidad_disponible'
+                dato = validar_entero(1000, 'Cantidad disponible: ')
+        modificar_datos(id, categoria,dato)
+        clear()
+        print('Datos actualizados:')
+        mostrar_libro(id)
+        input('Dato modificado exitosamente. Presione Enter para continuar')
+
+def modificar_datos(id,cat,dato):
+    libros[id-1][cat] == dato
+    editar_libro_json()
 
 def modificar_cantidad(id):
     libros[id-1]['cantidad_disponible'] +=1
@@ -104,7 +149,7 @@ def mostrar_libro(id): #únicamente muestra el libro
 
 def buscar_datos_libros(dato, categoria): #buscar y devolver el id (si es -1 es porque no estaba)
     for libro in libros:
-        if libro[categoria]==dato:
+        if libro[categoria]==dato and libro['estado']=='Activo':
             print(f"""Título: {libro['titulo']} ||Autor: {libro['autor']} ||Editorial: {libro['editorial']} """)
     id = validar_entero(len(libros), 'Ingrese el id del libro elegido (0- Volver): ')
     return id
